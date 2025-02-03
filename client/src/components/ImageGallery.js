@@ -20,20 +20,25 @@ const ImageGallery = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/images/${id}`);
-      setImages(images.filter((img) => img.id !== id)); // سڕینەوەی وێنە لە لیستەکە
+      setImages(images.filter((img) => img.id !== id));
     } catch (err) {
       console.error("Error deleting image:", err);
     }
   };
 
-  const handleEdit = async (id, newCaption) => {
-    try {
-      await axios.put(`http://localhost:3000/images/${id}`, { caption: newCaption });
-      setImages(images.map((img) => (img.id === id ? { ...img, caption: newCaption } : img)));
-    } catch (err) {
-      console.error("Error updating caption:", err);
+
+  const handleEditUsername = async (id, currentUsername) => {
+    const newUsername = prompt("Enter new name:", currentUsername);
+    if (newUsername !== null) {
+      try {
+        await axios.put(`http://localhost:3000/images/update-username/${id}`, { username: newUsername });
+        setImages(images.map((img) => (img.id === id ? { ...img, username: newUsername } : img)));
+      } catch (err) {
+        console.error("Error updating username:", err);
+      }
     }
   };
+  
 
   return (
     <div className="image-gallery">
@@ -45,8 +50,8 @@ const ImageGallery = () => {
             <img src={`http://localhost:3000${img.image_path}`} alt="Uploaded" />
             <p>{img.caption}</p>
             <button onClick={() => handleDelete(img.id)}>Delete</button>
-            <button onClick={() => handleEdit(img.id, prompt("Enter new caption:", img.caption))}>
-              Edit Caption
+            <button onClick={() => handleEditUsername(img.id, img.username)}>
+                Edit Name
             </button>
           </div>
         ))}

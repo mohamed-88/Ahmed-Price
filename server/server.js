@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 
-// Setup
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
@@ -36,10 +35,11 @@ const upload = multer({ storage });
 // Upload image and save to database
 app.post('/upload', upload.single('image'), (req, res) => {
   const username = req.body.username;
+  const caption = req.body.caption || ''; // دابینکردنی caption
   const imagePath = `/uploads/${req.file.filename}`;
   
-  const sql = 'INSERT INTO ahmed_price (username, image_path) VALUES (?, ?)';
-  db.query(sql, [username, imagePath], (err, result) => {
+  const sql = 'INSERT INTO ahmed_price (username, image_path, caption) VALUES (?, ?, ?)';
+  db.query(sql, [username, imagePath, caption], (err, result) => {
     if (err) return res.status(500).send(err);
     res.json({ message: 'Image uploaded successfully!', id: result.insertId });
   });
@@ -54,16 +54,38 @@ app.get('/images', (req, res) => {
   });
 });
 
+// Edit image username
+app.put('/images/update-username/:id', (req, res) => {
+  const { id } = req.params;
+  const { username } = req.body;
 
-// delete image
+  const sql = 'UPDATE ahmed_price SET username = ? WHERE id = ?';
+  db.query(sql, [username, id], (err, result) => {
+    if (err) return res.status(500).send(err);
+    res.json({ message: 'username updated successfully' });
+  });
+});
+
+
+// Edit image caption
+// app.put('/images/:id', (req, res) => {
+//   const { id } = req.params;
+//   const { caption } = req.body; // تەنیا caption وەردەگیرێت
+
+//   const sql = 'UPDATE ahmed_price SET caption = ? WHERE id = ?';
+//   db.query(sql, [caption, id], (err, result) => {
+//     if (err) return res.status(500).send(err);
+//     res.json({ message: 'Caption updated successfully' });
+//   });
+// });
+
+// Delete image
 app.delete("/images/:id", async (req, res) => {
   const { id } = req.params;
   await db.query("DELETE FROM ahmed_price WHERE id = ?", [id]);
   res.json({ message: "Image deleted successfully" });
 });
 
-
 // Start server
-const PORT = 3000; // پۆرتی نوێ
+const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
