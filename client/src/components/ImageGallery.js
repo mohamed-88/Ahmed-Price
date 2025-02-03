@@ -42,21 +42,21 @@ const ImageGallery = () => {
 
   return (
     <div className="image-gallery">
-      <h2>Uploaded Images</h2>
-      <div className="gallery">
-        {images.map((img) => (
-          <div key={img.id} className="image-card">
-            <p>{img.username}</p>
-            <img src={`http://localhost:3000${img.image_path}`} alt="Uploaded" />
-            <p>{img.caption}</p>
-            <button onClick={() => handleDelete(img.id)}>Delete</button>
-            <button onClick={() => handleEditUsername(img.id, img.username)}>
-                Edit Name
-            </button>
-          </div>
-        ))}
-      </div>
+    <h2>Uploaded Images</h2>
+    <div className="gallery">
+      {images.map((img) => (
+        <div key={img.id} className="image-card">
+          <button onClick={() => handleEditUsername(img.id, img.username || "")}>
+            Edit Name
+          </button>
+          <button onClick={() => handleDelete(img.id)}>Delete</button>
+          <img src={`http://localhost:3000${img.image_path}`} alt="Uploaded" />
+          <p>{img.caption}</p>
+          <p><strong>Name:</strong> {img.username || "Enter your name"}</p>
+        </div>
+      ))}
     </div>
+  </div>
   );
 };
 

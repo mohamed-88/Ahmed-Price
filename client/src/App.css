@@ -45,4 +45,5 @@ button {
 
 button:hover {
   background: darkred;
+  color: white;
 }
